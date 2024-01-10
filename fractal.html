@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #2c3e50;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        .title-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .options-container {
+            display: flex;
+            align-items: center;
+        }
+
+        label, input, button {
+            margin: 10px;
+        }
+
+        input, button {
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        label {
+            font-size: 18px;
+        }
+
+        input {
+            width: 50px;
+            text-align: center;
+        }
+
+        button {
+            background-color: #3498db;
+            color: #ffffff;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        canvas {
+            border: 2px solid #2c3e50;
+            margin-top: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+    <title>Sierpinski Triangle</title>
+</head>
+<body>
+    <h1>Sierpinski Triangle</h1>
+    
+    <div class="title-container">
+        <h2>Triangle of Sierpinski</h2>
+    </div>
+
+    <div class="options-container">
+        <label for="iterationInput">Iterations:</label>
+        <input type="number" id="iterationInput" value="4">
+        <label for="animateCheckbox">Animate:</label>
+        <input type="checkbox" id="animateCheckbox" checked>
+        <button onclick="drawSierpinski()">Draw</button>
+    </div>
+
+    <canvas id="sierpinskiCanvas" width="600" height="600"></canvas>
+
+    <script>
+        const canvas = document.getElementById('sierpinskiCanvas');
+        const ctx = canvas.getContext('2d');
+        let animationId;
+
+        function drawSierpinski() {
+            cancelAnimationFrame(animationId);
+
+            const iterations = parseInt(document.getElementById('iterationInput').value, 10);
+            const animate = document.getElementById('animateCheckbox').checked;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawSierpinskiRecursive(50, 550, 500, iterations, animate);
+        }
+
+        function drawSierpinskiRecursive(x, y, size, depth, animate) {
+            if (depth === 0) {
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                ctx.lineTo(x + size, y);
+                ctx.lineTo(x + size / 2, y - size * Math.sqrt(3) / 2);
+                ctx.closePath();
+                ctx.fillStyle = '#3498db';
+                ctx.fill();
+            } else {
+                const newSize = size / 2;
+
+                drawSierpinskiRecursive(x, y, newSize, depth - 1, animate);
+
+                if (animate) {
+                    animationId = requestAnimationFrame(() => {
+                        drawSierpinskiRecursive(x + newSize, y, newSize, depth - 1, animate);
+                    });
+                } else {
+                    drawSierpinskiRecursive(x + newSize, y, newSize, depth - 1, animate);
+                }
+
+                drawSierpinskiRecursive(x + newSize / 2, y - newSize * Math.sqrt(3) / 2, newSize, depth - 1, animate);
+            }
+        }
+
+        drawSierpinski();
+    </script>
+</body>
+</html>
